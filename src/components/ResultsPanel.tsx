@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -49,9 +49,9 @@ export function ResultsPanel({ result }: ResultsPanelProps) {
 
   return (
     <Card className="h-full">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <FileJson className="h-5 w-5" />
+      <CardHeader className="pb-3 sm:pb-6">
+        <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+          <FileJson className="h-4 w-4 sm:h-5 sm:w-5" />
           圧縮結果
         </CardTitle>
       </CardHeader>
@@ -100,17 +100,19 @@ export function ResultsPanel({ result }: ResultsPanelProps) {
               <Button
                 onClick={handleCopy}
                 variant="default"
-                className="flex-1"
+                className="flex-1 text-xs sm:text-sm"
+                size="sm"
                 disabled={!result.compressed}
               >
                 {copied ? (
                   <>
-                    <CheckCircle className="h-4 w-4 mr-2" />
-                    コピー済み
+                    <CheckCircle className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                    <span className="hidden sm:inline">コピー済み</span>
+                    <span className="sm:hidden">済</span>
                   </>
                 ) : (
                   <>
-                    <Copy className="h-4 w-4 mr-2" />
+                    <Copy className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
                     コピー
                   </>
                 )}
@@ -119,11 +121,13 @@ export function ResultsPanel({ result }: ResultsPanelProps) {
               <Button
                 onClick={handleDownload}
                 variant="outline"
-                className="flex-1"
+                className="flex-1 text-xs sm:text-sm"
+                size="sm"
                 disabled={!result.compressed}
               >
-                <Download className="h-4 w-4 mr-2" />
-                ダウンロード
+                <Download className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                <span className="hidden sm:inline">ダウンロード</span>
+                <span className="sm:hidden">DL</span>
               </Button>
             </div>
 

@@ -65,7 +65,7 @@ export function MapView({ geojson }: MapViewProps) {
     }
   };
 
-  const pointToLayer = (feature: any, latlng: L.LatLng) => {
+  const pointToLayer = (_feature: any, latlng: L.LatLng) => {
     return L.circleMarker(latlng, {
       radius: 8,
       fillColor: "#3b82f6",
@@ -76,7 +76,7 @@ export function MapView({ geojson }: MapViewProps) {
     });
   };
 
-  const style = (feature: any) => {
+  const style = (_feature: any) => {
     return {
       fillColor: '#3b82f6',
       weight: 2,
@@ -89,14 +89,14 @@ export function MapView({ geojson }: MapViewProps) {
 
   return (
     <Card className="h-full">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Map className="h-5 w-5" />
+      <CardHeader className="pb-3 sm:pb-6">
+        <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+          <Map className="h-4 w-4 sm:h-5 sm:w-5" />
           マッププレビュー
         </CardTitle>
       </CardHeader>
       <CardContent className="p-0">
-        <div className="h-[450px] relative">
+        <div className="h-[350px] sm:h-[450px] relative">
           <MapContainer
             center={[35.6762, 139.6503]}
             zoom={10}

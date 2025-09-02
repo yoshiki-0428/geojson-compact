@@ -1,4 +1,3 @@
-import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -37,19 +36,22 @@ export function HistoryPanel({ history, onHistorySelect, onHistoryUpdate }: Hist
 
   return (
     <Card className="h-full">
-      <CardHeader>
+      <CardHeader className="pb-3 sm:pb-6">
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
-            <History className="h-5 w-5" />
-            履歴（最新10件）
+          <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+            <History className="h-4 w-4 sm:h-5 sm:w-5" />
+            <span className="hidden sm:inline">履歴（最新10件）</span>
+            <span className="sm:hidden">履歴</span>
           </CardTitle>
           {history.length > 0 && (
             <Button
               variant="ghost"
               size="sm"
               onClick={handleClearAll}
+              className="text-xs sm:text-sm"
             >
-              すべて削除
+              <span className="hidden sm:inline">すべて削除</span>
+              <span className="sm:hidden">削除</span>
             </Button>
           )}
         </div>
@@ -62,7 +64,7 @@ export function HistoryPanel({ history, onHistorySelect, onHistoryUpdate }: Hist
             <p className="text-sm mt-1">圧縮したGeoJSONは自動的に保存されます</p>
           </div>
         ) : (
-          <div className="space-y-2 max-h-[400px] overflow-y-auto">
+          <div className="space-y-2 max-h-[300px] sm:max-h-[400px] overflow-y-auto">
             {history.map((item) => (
               <div
                 key={item.id}

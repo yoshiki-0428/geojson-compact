@@ -105,10 +105,10 @@ export function GeoJSONInput({ onGeoJSONChange, error }: GeoJSONInputProps) {
 
   return (
     <Card className="h-full">
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
-            <FileJson className="h-5 w-5" />
+      <CardHeader className="pb-3 sm:pb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+            <FileJson className="h-4 w-4 sm:h-5 sm:w-5" />
             GeoJSON入力
           </CardTitle>
           <div className="flex gap-2">
@@ -116,16 +116,20 @@ export function GeoJSONInput({ onGeoJSONChange, error }: GeoJSONInputProps) {
               variant="outline"
               size="sm"
               onClick={loadSampleData}
+              className="text-xs sm:text-sm"
             >
-              サンプル読込
+              <span className="hidden sm:inline">サンプル読込</span>
+              <span className="sm:hidden">サンプル</span>
             </Button>
             <Button
               variant="outline"
               size="sm"
               onClick={() => fileInputRef.current?.click()}
+              className="text-xs sm:text-sm"
             >
-              <Upload className="h-4 w-4 mr-1" />
-              ファイル選択
+              <Upload className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+              <span className="hidden sm:inline">ファイル選択</span>
+              <span className="sm:hidden">ファイル</span>
             </Button>
           </div>
         </div>
@@ -139,7 +143,7 @@ export function GeoJSONInput({ onGeoJSONChange, error }: GeoJSONInputProps) {
         >
           <Textarea
             placeholder="GeoJSONを貼り付けるか、ファイルをドラッグ&ドロップしてください..."
-            className="min-h-[400px] font-mono text-sm"
+            className="min-h-[300px] sm:min-h-[400px] font-mono text-xs sm:text-sm"
             value={input}
             onChange={(e) => handleInputChange(e.target.value)}
           />
