@@ -250,28 +250,28 @@ function App() {
           </div>
         </div>
 
-        {/* Features Section - Hide on mobile */}
-        <div className="hidden sm:grid mt-12 grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="text-center p-6 border rounded-lg">
-            <div className="text-4xl mb-2">⚡</div>
-            <h3 className="font-semibold mb-2">即座に圧縮</h3>
-            <p className="text-sm text-muted-foreground">
+        {/* Features Section */}
+        <div className="mt-8 sm:mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+          <div className="text-center p-4 sm:p-6 border rounded-lg bg-card">
+            <div className="text-3xl sm:text-4xl mb-2">⚡</div>
+            <h3 className="font-semibold mb-1 sm:mb-2 text-sm sm:text-base">即座に圧縮</h3>
+            <p className="text-xs sm:text-sm text-muted-foreground">
               貼り付けと同時に自動圧縮。設定不要で最適な結果を提供
             </p>
           </div>
           
-          <div className="text-center p-6 border rounded-lg">
-            <div className="text-4xl mb-2">🔒</div>
-            <h3 className="font-semibold mb-2">完全プライバシー</h3>
-            <p className="text-sm text-muted-foreground">
+          <div className="text-center p-4 sm:p-6 border rounded-lg bg-card">
+            <div className="text-3xl sm:text-4xl mb-2">🔒</div>
+            <h3 className="font-semibold mb-1 sm:mb-2 text-sm sm:text-base">完全プライバシー</h3>
+            <p className="text-xs sm:text-sm text-muted-foreground">
               すべての処理はブラウザ内で完結。データは送信されません
             </p>
           </div>
           
-          <div className="text-center p-6 border rounded-lg">
-            <div className="text-4xl mb-2">📊</div>
-            <h3 className="font-semibold mb-2">リアルタイム表示</h3>
-            <p className="text-sm text-muted-foreground">
+          <div className="text-center p-4 sm:p-6 border rounded-lg bg-card">
+            <div className="text-3xl sm:text-4xl mb-2">📊</div>
+            <h3 className="font-semibold mb-1 sm:mb-2 text-sm sm:text-base">リアルタイム表示</h3>
+            <p className="text-xs sm:text-sm text-muted-foreground">
               圧縮結果を即座にマップで確認。履歴機能で作業効率UP
             </p>
           </div>
