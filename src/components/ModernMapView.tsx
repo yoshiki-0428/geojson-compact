@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { X, ZoomIn, ZoomOut, Maximize2 } from 'lucide-react';
-import { IconButton } from './ui/Button';
+import { IconButton } from './ui/button';
 
 interface ModernMapViewProps {
   geoJsonData: any;

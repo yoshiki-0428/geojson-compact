@@ -1,5 +1,5 @@
 import { Clock, FileJson, TrendingDown, ChevronRight } from 'lucide-react';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from './ui/Card';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from './ui/card';
 import { cn } from '../lib/utils';
 
 interface HistoryItem {

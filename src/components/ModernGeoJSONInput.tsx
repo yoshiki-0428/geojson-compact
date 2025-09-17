@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { Upload, FileJson, Link, Code, AlertCircle, CheckCircle } from 'lucide-react';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from './ui/Card';
-import { Button } from './ui/Button';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from './ui/card';
+import { Button } from './ui/button';
 import { cn } from '../lib/utils';
 
 interface ModernGeoJSONInputProps {

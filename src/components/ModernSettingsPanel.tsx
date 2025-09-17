@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Settings, Sliders, Palette, Save, Info } from 'lucide-react';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from './ui/Card';
-import { Button } from './ui/Button';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from './ui/card';
+import { Button } from './ui/button';
 import { cn } from '../lib/utils';
 
 export function ModernSettingsPanel() {
