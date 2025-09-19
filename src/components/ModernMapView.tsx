@@ -1,7 +1,7 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { X, ZoomIn, ZoomOut, Maximize2 } from 'lucide-react';
+import { X, ZoomIn, ZoomOut, Maximize2, Map, Layers } from 'lucide-react';
 import { IconButton } from './ui/button';
 
 interface ModernMapViewProps {
@@ -11,70 +11,115 @@ interface ModernMapViewProps {
 
 export function ModernMapView({ geoJsonData, onClose }: ModernMapViewProps) {
   const mapRef = useRef<HTMLDivElement>(null);
+  const osmMapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
+  const osmMapInstanceRef = useRef<L.Map | null>(null);
+  const [activeMap, setActiveMap] = useState<'carto' | 'osm'>('carto');
 
   useEffect(() => {
-    if (!mapRef.current || !geoJsonData) return;
+    if (!mapRef.current || !osmMapRef.current || !geoJsonData) return;
 
-    // Initialize map
-    const map = L.map(mapRef.current).setView([0, 0], 2);
-    mapInstanceRef.current = map;
+    // Initialize Carto map
+    const cartoMap = L.map(mapRef.current).setView([0, 0], 2);
+    mapInstanceRef.current = cartoMap;
 
-    // Add tile layer with a modern style
+    // Add Carto tile layer
     L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
       attribution: '© OpenStreetMap contributors © CARTO',
       subdomains: 'abcd',
       maxZoom: 20
-    }).addTo(map);
+    }).addTo(cartoMap);
 
-    // Add GeoJSON layer
-    const geoJsonLayer = L.geoJSON(geoJsonData, {
-      style: {
-        color: '#8b5cf6',
-        weight: 2,
-        opacity: 0.8,
-        fillColor: '#8b5cf6',
-        fillOpacity: 0.3
-      },
-      onEachFeature: (feature, layer) => {
-        if (feature.properties) {
-          const props = Object.entries(feature.properties)
-            .map(([key, value]) => `<strong>${key}:</strong> ${value}`)
-            .join('<br>');
-          layer.bindPopup(props);
-        }
+    // Initialize OpenStreetMap
+    const osmMap = L.map(osmMapRef.current).setView([0, 0], 2);
+    osmMapInstanceRef.current = osmMap;
+
+    // Add OpenStreetMap tile layer
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors',
+      maxZoom: 19
+    }).addTo(osmMap);
+
+    // Create shared GeoJSON style
+    const geoJsonStyle = {
+      color: '#8b5cf6',
+      weight: 2,
+      opacity: 0.8,
+      fillColor: '#8b5cf6',
+      fillOpacity: 0.3
+    };
+
+    const onEachFeature = (feature: any, layer: any) => {
+      if (feature.properties) {
+        const props = Object.entries(feature.properties)
+          .map(([key, value]) => `<strong>${key}:</strong> ${value}`)
+          .join('<br>');
+        layer.bindPopup(props);
       }
-    }).addTo(map);
+    };
 
-    // Fit map to GeoJSON bounds
-    const bounds = geoJsonLayer.getBounds();
+    // Add GeoJSON layer to both maps
+    const cartoGeoJsonLayer = L.geoJSON(geoJsonData, {
+      style: geoJsonStyle,
+      onEachFeature
+    }).addTo(cartoMap);
+
+    const osmGeoJsonLayer = L.geoJSON(geoJsonData, {
+      style: geoJsonStyle,
+      onEachFeature
+    }).addTo(osmMap);
+
+    // Fit both maps to GeoJSON bounds
+    const bounds = cartoGeoJsonLayer.getBounds();
     if (bounds.isValid()) {
-      map.fitBounds(bounds, { padding: [50, 50] });
+      cartoMap.fitBounds(bounds, { padding: [50, 50] });
+      osmMap.fitBounds(bounds, { padding: [50, 50] });
     }
 
+    // Sync map movements
+    const syncMaps = (sourceMap: L.Map, targetMap: L.Map) => {
+      sourceMap.on('zoomend moveend', () => {
+        const center = sourceMap.getCenter();
+        const zoom = sourceMap.getZoom();
+        targetMap.setView(center, zoom);
+      });
+    };
+
+    syncMaps(cartoMap, osmMap);
+    syncMaps(osmMap, cartoMap);
+
     return () => {
-      map.remove();
+      cartoMap.remove();
+      osmMap.remove();
     };
   }, [geoJsonData]);
 
   const handleZoomIn = () => {
-    if (mapInstanceRef.current) {
+    if (activeMap === 'carto' && mapInstanceRef.current) {
       mapInstanceRef.current.zoomIn();
+    } else if (activeMap === 'osm' && osmMapInstanceRef.current) {
+      osmMapInstanceRef.current.zoomIn();
     }
   };
 
   const handleZoomOut = () => {
-    if (mapInstanceRef.current) {
+    if (activeMap === 'carto' && mapInstanceRef.current) {
       mapInstanceRef.current.zoomOut();
+    } else if (activeMap === 'osm' && osmMapInstanceRef.current) {
+      osmMapInstanceRef.current.zoomOut();
     }
   };
 
   const handleFitBounds = () => {
-    if (mapInstanceRef.current && geoJsonData) {
+    if (geoJsonData) {
       const geoJsonLayer = L.geoJSON(geoJsonData);
       const bounds = geoJsonLayer.getBounds();
       if (bounds.isValid()) {
-        mapInstanceRef.current.fitBounds(bounds, { padding: [50, 50] });
+        if (activeMap === 'carto' && mapInstanceRef.current) {
+          mapInstanceRef.current.fitBounds(bounds, { padding: [50, 50] });
+        } else if (activeMap === 'osm' && osmMapInstanceRef.current) {
+          osmMapInstanceRef.current.fitBounds(bounds, { padding: [50, 50] });
+        }
       }
     }
   };
@@ -88,37 +133,79 @@ export function ModernMapView({ geoJsonData, onClose }: ModernMapViewProps) {
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
               Map Visualization
             </h3>
-            <IconButton
-              onClick={onClose}
-              variant="ghost"
-              icon={<X className="w-5 h-5" />}
-            />
+            <div className="flex items-center gap-3">
+              <div className="flex bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
+                <button
+                  onClick={() => setActiveMap('carto')}
+                  className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all ${
+                    activeMap === 'carto'
+                      ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
+                      : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                  }`}
+                >
+                  Carto
+                </button>
+                <button
+                  onClick={() => setActiveMap('osm')}
+                  className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all ${
+                    activeMap === 'osm'
+                      ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
+                      : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                  }`}
+                >
+                  OpenStreetMap
+                </button>
+              </div>
+              <IconButton
+                onClick={onClose}
+                variant="ghost"
+                icon={<X className="w-5 h-5" />}
+              />
+            </div>
           </div>
         </div>
 
-        {/* Map Container */}
-        <div ref={mapRef} className="absolute inset-0 top-14" />
+        {/* Map Container - Grid Layout */}
+        <div className="absolute inset-0 top-14 grid grid-cols-2 gap-0">
+          {/* Carto Map */}
+          <div className="relative border-r border-gray-200 dark:border-gray-700">
+            <div ref={mapRef} className="absolute inset-0" />
+            <div className="absolute top-2 left-2 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md px-2 py-1 rounded text-xs font-medium text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700">
+              Carto Light
+            </div>
+          </div>
+
+          {/* OpenStreetMap */}
+          <div className="relative">
+            <div ref={osmMapRef} className="absolute inset-0" />
+            <div className="absolute top-2 left-2 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md px-2 py-1 rounded text-xs font-medium text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700">
+              OpenStreetMap
+            </div>
+          </div>
+        </div>
 
         {/* Map Controls */}
         <div className="absolute bottom-6 right-6 flex flex-col gap-2 z-10">
-          <IconButton
-            onClick={handleZoomIn}
-            variant="primary"
-            size="lg"
-            icon={<ZoomIn className="w-5 h-5" />}
-          />
-          <IconButton
-            onClick={handleZoomOut}
-            variant="primary"
-            size="lg"
-            icon={<ZoomOut className="w-5 h-5" />}
-          />
-          <IconButton
-            onClick={handleFitBounds}
-            variant="primary"
-            size="lg"
-            icon={<Maximize2 className="w-5 h-5" />}
-          />
+          <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-md p-1 rounded-lg border border-gray-200 dark:border-gray-700">
+            <IconButton
+              onClick={handleZoomIn}
+              variant="ghost"
+              size="lg"
+              icon={<ZoomIn className="w-5 h-5" />}
+            />
+            <IconButton
+              onClick={handleZoomOut}
+              variant="ghost"
+              size="lg"
+              icon={<ZoomOut className="w-5 h-5" />}
+            />
+            <IconButton
+              onClick={handleFitBounds}
+              variant="ghost"
+              size="lg"
+              icon={<Maximize2 className="w-5 h-5" />}
+            />
+          </div>
         </div>
       </div>
     </div>

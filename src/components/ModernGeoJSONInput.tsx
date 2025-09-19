@@ -11,7 +11,7 @@ interface ModernGeoJSONInputProps {
 }
 
 export function ModernGeoJSONInput({ onGeoJSONLoad, onCompress, isCompressing }: ModernGeoJSONInputProps) {
-  const [inputMethod, setInputMethod] = useState<'upload' | 'url' | 'paste'>('upload');
+  const [inputMethod, setInputMethod] = useState<'upload' | 'url' | 'paste'>('paste');
   const [url, setUrl] = useState('');
   const [pasteContent, setPasteContent] = useState('');
   const [error, setError] = useState<string | null>(null);
