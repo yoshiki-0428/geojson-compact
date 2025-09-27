@@ -20,13 +20,13 @@ export function AppLayout({ children, activeView, onViewChange }: AppLayoutProps
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 from-gray-900 to-gray-950">
       {/* Mobile Header */}
-      <header className="lg:hidden sticky top-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-b border-gray-200 dark:border-gray-800">
+      <header className="lg:hidden sticky top-0 z-50 bg-white/80 bg-gray-900/80 backdrop-blur-xl border-b border-gray-200 border-gray-800">
         <div className="flex items-center justify-between p-4">
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+            className="p-2 rounded-lg hover:bg-gray-100 hover:bg-gray-800 transition-colors"
           >
             {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
@@ -34,7 +34,7 @@ export function AppLayout({ children, activeView, onViewChange }: AppLayoutProps
             <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center">
               <FileJson className="w-4 h-4 text-white" />
             </div>
-            <span className="font-semibold text-gray-900 dark:text-white">GeoCompact</span>
+            <span className="font-semibold text-gray-900 text-white">GeoCompact</span>
           </div>
           <div className="w-9" /> {/* Spacer for centering */}
         </div>
@@ -44,20 +44,20 @@ export function AppLayout({ children, activeView, onViewChange }: AppLayoutProps
         {/* Desktop Sidebar */}
         <aside
           className={cn(
-            "hidden lg:flex flex-col bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 transition-all duration-300",
+            "hidden lg:flex flex-col bg-white bg-gray-900 border-r border-gray-200 border-gray-800 transition-all duration-300",
             sidebarCollapsed ? "w-20" : "w-64"
           )}
         >
           {/* Logo */}
-          <div className="p-6 border-b border-gray-200 dark:border-gray-800">
+          <div className="p-6 border-b border-gray-200">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0">
                 <FileJson className="w-5 h-5 text-white" />
               </div>
               {!sidebarCollapsed && (
                 <div>
-                  <h1 className="font-bold text-lg text-gray-900 dark:text-white">GeoCompact</h1>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Compress GeoJSON</p>
+                  <h1 className="font-bold text-lg text-gray-900">GeoCompact</h1>
+                  <p className="text-xs text-gray-500">Compress GeoJSON</p>
                 </div>
               )}
             </div>
@@ -74,12 +74,12 @@ export function AppLayout({ children, activeView, onViewChange }: AppLayoutProps
                   onClick={() => onViewChange(item.id as any)}
                   className={cn(
                     "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all",
-                    "hover:bg-gray-100 dark:hover:bg-gray-800",
-                    isActive && "bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400",
-                    !isActive && "text-gray-700 dark:text-gray-300"
+                    "hover:bg-gray-100 hover:bg-gray-800",
+                    isActive && "bg-purple-50 bg-purple-900/20 text-purple-600 text-purple-400",
+                    !isActive && "text-gray-700 text-gray-300"
                   )}
                 >
-                  <Icon className={cn("w-5 h-5 flex-shrink-0", isActive && "text-purple-600 dark:text-purple-400")} />
+                  <Icon className={cn("w-5 h-5 flex-shrink-0", isActive && "text-purple-600 text-purple-400")} />
                   {!sidebarCollapsed && (
                     <div className="text-left">
                       <div className="font-medium text-sm">{item.label}</div>
@@ -92,10 +92,10 @@ export function AppLayout({ children, activeView, onViewChange }: AppLayoutProps
           </nav>
 
           {/* Collapse Button */}
-          <div className="p-4 border-t border-gray-200 dark:border-gray-800">
+          <div className="p-4 border-t border-gray-200">
             <button
               onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-              className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-gray-600 dark:text-gray-400"
+              className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 hover:bg-gray-800 transition-colors text-gray-600 text-gray-400"
             >
               <ChevronLeft className={cn("w-4 h-4 transition-transform", sidebarCollapsed && "rotate-180")} />
               {!sidebarCollapsed && <span className="text-sm">Collapse</span>}
@@ -104,12 +104,12 @@ export function AppLayout({ children, activeView, onViewChange }: AppLayoutProps
 
           {/* Footer Links */}
           {!sidebarCollapsed && (
-            <div className="p-4 border-t border-gray-200 dark:border-gray-800">
+            <div className="p-4 border-t border-gray-200">
               <div className="flex items-center justify-center gap-4">
-                <a href="https://github.com" className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
+                <a href="https://github.com" className="text-gray-400 hover:text-gray-600 hover:text-gray-300 transition-colors">
                   <Github className="w-4 h-4" />
                 </a>
-                <a href="https://twitter.com" className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
+                <a href="https://twitter.com" className="text-gray-400 hover:text-gray-600 hover:text-gray-300 transition-colors">
                   <Twitter className="w-4 h-4" />
                 </a>
               </div>
@@ -125,15 +125,15 @@ export function AppLayout({ children, activeView, onViewChange }: AppLayoutProps
           )}
         >
           <div className="absolute inset-0 bg-black/50" onClick={() => setSidebarOpen(false)} />
-          <aside className="absolute left-0 top-0 h-full w-72 bg-white dark:bg-gray-900 shadow-2xl">
-            <div className="p-6 border-b border-gray-200 dark:border-gray-800">
+          <aside className="absolute left-0 top-0 h-full w-72 bg-white bg-gray-900 shadow-2xl">
+            <div className="p-6 border-b border-gray-200">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center">
                   <FileJson className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h1 className="font-bold text-lg text-gray-900 dark:text-white">GeoCompact</h1>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Compress GeoJSON</p>
+                  <h1 className="font-bold text-lg text-gray-900">GeoCompact</h1>
+                  <p className="text-xs text-gray-500">Compress GeoJSON</p>
                 </div>
               </div>
             </div>
@@ -151,12 +151,12 @@ export function AppLayout({ children, activeView, onViewChange }: AppLayoutProps
                     }}
                     className={cn(
                       "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all",
-                      "hover:bg-gray-100 dark:hover:bg-gray-800",
-                      isActive && "bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400",
-                      !isActive && "text-gray-700 dark:text-gray-300"
+                      "hover:bg-gray-100 hover:bg-gray-800",
+                      isActive && "bg-purple-50 bg-purple-900/20 text-purple-600 text-purple-400",
+                      !isActive && "text-gray-700 text-gray-300"
                     )}
                   >
-                    <Icon className={cn("w-5 h-5", isActive && "text-purple-600 dark:text-purple-400")} />
+                    <Icon className={cn("w-5 h-5", isActive && "text-purple-600 text-purple-400")} />
                     <div className="text-left">
                       <div className="font-medium text-sm">{item.label}</div>
                       <div className="text-xs opacity-60">{item.description}</div>

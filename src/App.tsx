@@ -28,7 +28,7 @@ interface HistoryItem {
 }
 
 function App() {
-  const [activeView, setActiveView] = useState<'input' | 'results' | 'history' | 'settings'>('input');
+  const [activeView, setActiveView] = useState<'input' | 'results' | 'history' | 'settings'>('results');
   const [geoJsonData, setGeoJsonData] = useState<any>(null);
   const [compressionResult, setCompressionResult] = useState<CompressionResult | null>(null);
   const [isCompressing, setIsCompressing] = useState(false);
@@ -151,9 +151,10 @@ function App() {
         toastOptions={{
           duration: 4000,
           style: {
-            background: '#1f2937',
-            color: '#fff',
+            background: '#fff',
+            color: '#1f2937',
             borderRadius: '0.5rem',
+            border: '1px solid #e5e7eb',
           },
           success: {
             iconTheme: {

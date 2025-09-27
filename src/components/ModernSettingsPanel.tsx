@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Settings, Sliders, Palette, Save, Info } from 'lucide-react';
+import { Settings, Sliders, Save, Info } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { cn } from '../lib/utils';
@@ -7,7 +7,6 @@ import { cn } from '../lib/utils';
 export function ModernSettingsPanel() {
   const [precision, setPrecision] = useState(6);
   const [simplification, setSimplification] = useState(0.0001);
-  const [theme, setTheme] = useState<'light' | 'dark' | 'system'>('system');
   const [autoCompress, setAutoCompress] = useState(false);
 
   const handleSave = () => {
@@ -15,7 +14,6 @@ export function ModernSettingsPanel() {
     localStorage.setItem('geoCompactSettings', JSON.stringify({
       precision,
       simplification,
-      theme,
       autoCompress,
     }));
   };
@@ -46,12 +44,12 @@ export function ModernSettingsPanel() {
           <div>
             <label className="flex items-center justify-between mb-3">
               <div>
-                <span className="font-medium text-gray-900 dark:text-white">Coordinate Precision</span>
-                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                <span className="font-medium text-gray-900">Coordinate Precision</span>
+                <p className="text-sm text-gray-500 mt-1">
                   Number of decimal places to keep
                 </p>
               </div>
-              <span className="text-lg font-bold text-purple-600 dark:text-purple-400">
+              <span className="text-lg font-bold text-purple-600">
                 {precision}
               </span>
             </label>
@@ -61,7 +59,7 @@ export function ModernSettingsPanel() {
               max="10"
               value={precision}
               onChange={(e) => setPrecision(Number(e.target.value))}
-              className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
+              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
             />
             <div className="flex justify-between mt-2 text-xs text-gray-500">
               <span>Low (1)</span>
@@ -72,12 +70,12 @@ export function ModernSettingsPanel() {
           <div>
             <label className="flex items-center justify-between mb-3">
               <div>
-                <span className="font-medium text-gray-900 dark:text-white">Simplification Tolerance</span>
-                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                <span className="font-medium text-gray-900">Simplification Tolerance</span>
+                <p className="text-sm text-gray-500 mt-1">
                   Douglas-Peucker algorithm tolerance
                 </p>
               </div>
-              <span className="text-lg font-bold text-purple-600 dark:text-purple-400">
+              <span className="text-lg font-bold text-purple-600">
                 {simplification}
               </span>
             </label>
@@ -88,7 +86,7 @@ export function ModernSettingsPanel() {
               step="0.00001"
               value={simplification}
               onChange={(e) => setSimplification(Number(e.target.value))}
-              className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
+              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
             />
             <div className="flex justify-between mt-2 text-xs text-gray-500">
               <span>Precise</span>
@@ -96,10 +94,10 @@ export function ModernSettingsPanel() {
             </div>
           </div>
 
-          <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+          <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
             <div>
-              <span className="font-medium text-gray-900 dark:text-white">Auto-compress on upload</span>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+              <span className="font-medium text-gray-900">Auto-compress on upload</span>
+              <p className="text-sm text-gray-500 mt-1">
                 Automatically compress files when loaded
               </p>
             </div>
@@ -107,7 +105,7 @@ export function ModernSettingsPanel() {
               onClick={() => setAutoCompress(!autoCompress)}
               className={cn(
                 'relative w-12 h-6 rounded-full transition-colors',
-                autoCompress ? 'bg-purple-600' : 'bg-gray-300 dark:bg-gray-600'
+                autoCompress ? 'bg-purple-600' : 'bg-gray-300'
               )}
             >
               <span
@@ -121,62 +119,6 @@ export function ModernSettingsPanel() {
         </CardContent>
       </Card>
 
-      {/* Appearance Settings */}
-      <Card variant="default">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Palette className="w-5 h-5 text-purple-500" />
-            Appearance
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            {(['light', 'dark', 'system'] as const).map((option) => (
-              <label
-                key={option}
-                className={cn(
-                  'flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-all',
-                  theme === option
-                    ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20'
-                    : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
-                )}
-              >
-                <input
-                  type="radio"
-                  name="theme"
-                  value={option}
-                  checked={theme === option}
-                  onChange={(e) => setTheme(e.target.value as any)}
-                  className="sr-only"
-                />
-                <div
-                  className={cn(
-                    'w-5 h-5 rounded-full border-2',
-                    theme === option
-                      ? 'border-purple-500 bg-purple-500'
-                      : 'border-gray-400 dark:border-gray-500'
-                  )}
-                >
-                  {theme === option && (
-                    <div className="w-full h-full rounded-full bg-white scale-50" />
-                  )}
-                </div>
-                <div className="flex-1">
-                  <span className="font-medium text-gray-900 dark:text-white capitalize">
-                    {option}
-                  </span>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    {option === 'light' && 'Always use light theme'}
-                    {option === 'dark' && 'Always use dark theme'}
-                    {option === 'system' && 'Follow system preferences'}
-                  </p>
-                </div>
-              </label>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
       {/* About */}
       <Card variant="bordered">
         <CardHeader>
@@ -186,7 +128,7 @@ export function ModernSettingsPanel() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-3 text-sm text-gray-600 dark:text-gray-400">
+          <div className="space-y-3 text-sm text-gray-600">
             <p>
               GeoCompact is a powerful GeoJSON compression tool that reduces file sizes while preserving geographic accuracy.
             </p>
@@ -194,8 +136,8 @@ export function ModernSettingsPanel() {
               Using advanced algorithms including coordinate precision reduction and Douglas-Peucker simplification,
               we achieve typical compression ratios of 60-80%.
             </p>
-            <div className="pt-3 border-t border-gray-200 dark:border-gray-700">
-              <p className="font-medium text-gray-900 dark:text-white mb-2">Features:</p>
+            <div className="pt-3 border-t border-gray-200">
+              <p className="font-medium text-gray-900 mb-2">Features:</p>
               <ul className="space-y-1 ml-4">
                 <li>• Lossless and lossy compression options</li>
                 <li>• Real-time map visualization</li>

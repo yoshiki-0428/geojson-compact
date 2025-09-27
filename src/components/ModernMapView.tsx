@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { X, ZoomIn, ZoomOut, Maximize2, Map, Layers } from 'lucide-react';
+import { X, ZoomIn, ZoomOut, Maximize2 } from 'lucide-react';
 import { IconButton } from './ui/button';
 
 interface ModernMapViewProps {
@@ -64,7 +64,7 @@ export function ModernMapView({ geoJsonData, onClose }: ModernMapViewProps) {
       onEachFeature
     }).addTo(cartoMap);
 
-    const osmGeoJsonLayer = L.geoJSON(geoJsonData, {
+    L.geoJSON(geoJsonData, {
       style: geoJsonStyle,
       onEachFeature
     }).addTo(osmMap);
@@ -77,18 +77,24 @@ export function ModernMapView({ geoJsonData, onClose }: ModernMapViewProps) {
     }
 
     // Sync map movements
-    const syncMaps = (sourceMap: L.Map, targetMap: L.Map) => {
-      sourceMap.on('zoomend moveend', () => {
-        const center = sourceMap.getCenter();
-        const zoom = sourceMap.getZoom();
-        targetMap.setView(center, zoom);
-      });
+    const syncCartoToOsm = () => {
+      const center = cartoMap.getCenter();
+      const zoom = cartoMap.getZoom();
+      osmMap.setView(center, zoom, { animate: false });
     };
 
-    syncMaps(cartoMap, osmMap);
-    syncMaps(osmMap, cartoMap);
+    const syncOsmToCarto = () => {
+      const center = osmMap.getCenter();
+      const zoom = osmMap.getZoom();
+      cartoMap.setView(center, zoom, { animate: false });
+    };
+
+    cartoMap.on('move zoom', syncCartoToOsm);
+    osmMap.on('move zoom', syncOsmToCarto);
 
     return () => {
+      cartoMap.off('move zoom', syncCartoToOsm);
+      osmMap.off('move zoom', syncOsmToCarto);
       cartoMap.remove();
       osmMap.remove();
     };
