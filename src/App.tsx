@@ -128,6 +128,8 @@ function App() {
   const handleHistorySelect = (item: HistoryItem) => {
     setCompressionResult(item.data);
     setGeoJsonData(item.data.original);
+    setActiveView('input'); // Switch to input view to show the results
+    toast.success('History item loaded');
   };
 
   const renderContent = () => {
