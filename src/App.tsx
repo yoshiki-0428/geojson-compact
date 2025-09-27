@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { AppLayout } from './components/Layout/AppLayout';
 import { ModernGeoJSONInput } from './components/ModernGeoJSONInput';
 import { ModernResultsPanel } from './components/ModernResultsPanel';
@@ -28,12 +28,30 @@ interface HistoryItem {
 }
 
 function App() {
-  const [activeView, setActiveView] = useState<'input' | 'results' | 'history' | 'settings'>('results');
+  const [activeView, setActiveView] = useState<'input' | 'history' | 'settings'>('input');
   const [geoJsonData, setGeoJsonData] = useState<any>(null);
   const [compressionResult, setCompressionResult] = useState<CompressionResult | null>(null);
   const [isCompressing, setIsCompressing] = useState(false);
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [showMap, setShowMap] = useState(false);
+
+  // Load history from localStorage on component mount
+  useEffect(() => {
+    const savedHistory = localStorage.getItem('geoJsonHistory');
+    if (savedHistory) {
+      try {
+        const parsedHistory = JSON.parse(savedHistory);
+        // Convert timestamp strings back to Date objects
+        const historyWithDates = parsedHistory.map((item: any) => ({
+          ...item,
+          timestamp: new Date(item.timestamp)
+        }));
+        setHistory(historyWithDates);
+      } catch (error) {
+        console.error('Failed to load history from localStorage:', error);
+      }
+    }
+  }, []);
 
   const handleGeoJSONLoad = (data: any) => {
     setGeoJsonData(data);
@@ -82,7 +100,10 @@ function App() {
       };
       
       setHistory(prev => [historyItem, ...prev].slice(0, 10)); // Keep last 10 items
-      setActiveView('results');
+
+      // Save to localStorage
+      const updatedHistory = [historyItem, ...history].slice(0, 10);
+      localStorage.setItem('geoJsonHistory', JSON.stringify(updatedHistory));
       
       toast.success(`Compressed by ${(100 - compressionRatio).toFixed(1)}%!`);
     } catch (error) {
@@ -96,21 +117,23 @@ function App() {
   const handleHistorySelect = (item: HistoryItem) => {
     setCompressionResult(item.data);
     setGeoJsonData(item.data.original);
-    setActiveView('results');
   };
 
   const renderContent = () => {
     switch (activeView) {
       case 'input':
         return (
-          <ModernGeoJSONInput
-            onGeoJSONLoad={handleGeoJSONLoad}
-            onCompress={handleCompress}
-            isCompressing={isCompressing}
-          />
+          <div className="space-y-6">
+            <ModernGeoJSONInput
+              onGeoJSONLoad={handleGeoJSONLoad}
+              onCompress={handleCompress}
+              isCompressing={isCompressing}
+            />
+            {compressionResult && (
+              <ModernResultsPanel result={compressionResult} />
+            )}
+          </div>
         );
-      case 'results':
-        return <ModernResultsPanel result={compressionResult} />;
       case 'history':
         return <ModernHistoryPanel history={history} onSelect={handleHistorySelect} />;
       case 'settings':
@@ -126,8 +149,8 @@ function App() {
         <div className="relative">
           {renderContent()}
           
-          {/* Floating Map Toggle for Results View */}
-          {activeView === 'results' && compressionResult && (
+          {/* Floating Map Toggle for when compression result is available */}
+          {compressionResult && (
             <button
               onClick={() => setShowMap(!showMap)}
               className="fixed bottom-6 right-6 p-4 bg-purple-600 hover:bg-purple-700 text-white rounded-full shadow-lg transition-all hover:scale-110 z-30"

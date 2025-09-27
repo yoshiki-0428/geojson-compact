@@ -4,8 +4,8 @@ import { cn } from '../../lib/utils';
 
 interface AppLayoutProps {
   children: ReactNode;
-  activeView: 'input' | 'results' | 'history' | 'settings';
-  onViewChange: (view: 'input' | 'results' | 'history' | 'settings') => void;
+  activeView: 'input' | 'history' | 'settings';
+  onViewChange: (view: 'input' | 'history' | 'settings') => void;
 }
 
 export function AppLayout({ children, activeView, onViewChange }: AppLayoutProps) {
@@ -14,7 +14,6 @@ export function AppLayout({ children, activeView, onViewChange }: AppLayoutProps
 
   const navItems = [
     { id: 'input', label: 'Input', icon: FileJson, description: 'Add GeoJSON data' },
-    { id: 'results', label: 'Results', icon: Layers, description: 'View compression' },
     { id: 'history', label: 'History', icon: History, description: 'Recent files' },
     { id: 'settings', label: 'Settings', icon: Settings, description: 'Preferences' },
   ];

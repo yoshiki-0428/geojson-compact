@@ -59,21 +59,31 @@ export function ModernMapView({ geoJsonData, onClose }: ModernMapViewProps) {
     };
 
     // Add GeoJSON layer to both maps
-    const cartoGeoJsonLayer = L.geoJSON(geoJsonData, {
-      style: geoJsonStyle,
-      onEachFeature
-    }).addTo(cartoMap);
+    let cartoGeoJsonLayer: L.GeoJSON | null = null;
+    let osmGeoJsonLayer: L.GeoJSON | null = null;
 
-    L.geoJSON(geoJsonData, {
-      style: geoJsonStyle,
-      onEachFeature
-    }).addTo(osmMap);
+    try {
+      cartoGeoJsonLayer = L.geoJSON(geoJsonData, {
+        style: geoJsonStyle,
+        onEachFeature
+      }).addTo(cartoMap);
+
+      osmGeoJsonLayer = L.geoJSON(geoJsonData, {
+        style: geoJsonStyle,
+        onEachFeature
+      }).addTo(osmMap);
+    } catch (error) {
+      console.error('Error adding GeoJSON to map:', error);
+      console.log('GeoJSON data:', geoJsonData);
+    }
 
     // Fit both maps to GeoJSON bounds
-    const bounds = cartoGeoJsonLayer.getBounds();
-    if (bounds.isValid()) {
-      cartoMap.fitBounds(bounds, { padding: [50, 50] });
-      osmMap.fitBounds(bounds, { padding: [50, 50] });
+    if (cartoGeoJsonLayer && osmGeoJsonLayer) {
+      const bounds = cartoGeoJsonLayer.getBounds();
+      if (bounds.isValid()) {
+        cartoMap.fitBounds(bounds, { padding: [50, 50] });
+        osmMap.fitBounds(bounds, { padding: [50, 50] });
+      }
     }
 
     // Sync map movements
