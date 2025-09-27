@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { AppLayout } from './components/Layout/AppLayout';
-import { ModernGeoJSONInput } from './components/ModernGeoJSONInput';
-import { ModernResultsPanel } from './components/ModernResultsPanel';
+import { SimpleGeoJSONInput } from './components/SimpleGeoJSONInput';
+import { SimpleResultsPanel } from './components/SimpleResultsPanel';
 import { ModernHistoryPanel } from './components/ModernHistoryPanel';
 import { ModernSettingsPanel } from './components/ModernSettingsPanel';
 import { InlineMapView } from './components/InlineMapView';
@@ -135,18 +135,18 @@ function App() {
     switch (activeView) {
       case 'input':
         return (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 h-full p-4 lg:p-6">
-            <div className="space-y-4 overflow-auto">
-              <ModernGeoJSONInput
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 h-full p-4">
+            <div className="flex flex-col gap-4">
+              <SimpleGeoJSONInput
                 onGeoJSONLoad={handleGeoJSONLoad}
                 onCompress={handleCompress}
                 isCompressing={isCompressing}
               />
               {compressionResult && (
-                <ModernResultsPanel result={compressionResult} />
+                <SimpleResultsPanel result={compressionResult} />
               )}
             </div>
-            <div className="h-[500px] lg:h-full">
+            <div className="h-[400px] lg:h-full">
               <InlineMapView geoJsonData={geoJsonData} />
             </div>
           </div>
