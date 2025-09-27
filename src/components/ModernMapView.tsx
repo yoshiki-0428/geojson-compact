@@ -63,6 +63,11 @@ export function ModernMapView({ geoJsonData, onClose }: ModernMapViewProps) {
     let osmGeoJsonLayer: L.GeoJSON | null = null;
 
     try {
+      console.log('Adding GeoJSON to maps');
+      console.log('GeoJSON type:', geoJsonData?.type);
+      console.log('GeoJSON features count:', geoJsonData?.features?.length || 'N/A');
+      console.log('GeoJSON data structure:', JSON.stringify(geoJsonData, null, 2).substring(0, 500) + '...');
+
       cartoGeoJsonLayer = L.geoJSON(geoJsonData, {
         style: geoJsonStyle,
         onEachFeature
@@ -72,18 +77,32 @@ export function ModernMapView({ geoJsonData, onClose }: ModernMapViewProps) {
         style: geoJsonStyle,
         onEachFeature
       }).addTo(osmMap);
+
+      console.log('GeoJSON layers added successfully');
+      console.log('Carto layer feature count:', cartoGeoJsonLayer.getLayers().length);
+      console.log('OSM layer feature count:', osmGeoJsonLayer.getLayers().length);
     } catch (error) {
       console.error('Error adding GeoJSON to map:', error);
-      console.log('GeoJSON data:', geoJsonData);
+      console.log('Failed GeoJSON data:', geoJsonData);
     }
 
     // Fit both maps to GeoJSON bounds
     if (cartoGeoJsonLayer && osmGeoJsonLayer) {
       const bounds = cartoGeoJsonLayer.getBounds();
+      console.log('GeoJSON bounds:', bounds);
+      console.log('Bounds is valid:', bounds.isValid());
+
       if (bounds.isValid()) {
+        console.log('Fitting maps to bounds:', bounds.toBBoxString());
         cartoMap.fitBounds(bounds, { padding: [50, 50] });
         osmMap.fitBounds(bounds, { padding: [50, 50] });
+      } else {
+        console.warn('Invalid bounds, setting default view');
+        cartoMap.setView([35.6762, 139.6503], 10); // Tokyo as fallback
+        osmMap.setView([35.6762, 139.6503], 10);
       }
+    } else {
+      console.warn('No GeoJSON layers available for bounds calculation');
     }
 
     // Sync map movements

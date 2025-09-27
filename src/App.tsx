@@ -6,6 +6,7 @@ import { ModernHistoryPanel } from './components/ModernHistoryPanel';
 import { ModernSettingsPanel } from './components/ModernSettingsPanel';
 import { ModernMapView } from './components/ModernMapView';
 import { compressGeoJSON } from './utils/compression';
+import { generateAutoName } from './utils/geocoding';
 import { Toaster, toast } from 'react-hot-toast';
 
 interface CompressionResult {
@@ -20,6 +21,7 @@ interface CompressionResult {
 interface HistoryItem {
   id: string;
   name: string;
+  locationName?: string;
   timestamp: Date;
   originalSize: number;
   compressedSize: number;
@@ -87,18 +89,27 @@ function App() {
       };
       
       setCompressionResult(result);
-      
+
+      // Generate auto name with location info
+      let autoName = `Compression ${new Date().toLocaleTimeString()}`;
+      try {
+        autoName = await generateAutoName(geoJsonData);
+      } catch (error) {
+        console.warn('Failed to generate auto name:', error);
+      }
+
       // Add to history
       const historyItem: HistoryItem = {
         id: Date.now().toString(),
-        name: `Compression ${new Date().toLocaleTimeString()}`,
+        name: autoName,
+        locationName: autoName,
         timestamp: new Date(),
         originalSize,
         compressedSize,
         compressionRatio,
         data: result,
       };
-      
+
       setHistory(prev => [historyItem, ...prev].slice(0, 10)); // Keep last 10 items
 
       // Save to localStorage

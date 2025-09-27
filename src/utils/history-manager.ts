@@ -1,6 +1,7 @@
 export interface HistoryItem {
   id: string;
   name: string;
+  locationName?: string; // Auto-generated location name
   geojson: string;
   compressedSize: number;
   originalSize: number;
@@ -28,23 +29,56 @@ export function getHistory(): HistoryItem[] {
 export function addToHistory(item: Omit<HistoryItem, 'id' | 'timestamp'>): void {
   try {
     const history = getHistory();
-    
+
     const newItem: HistoryItem = {
       ...item,
       id: crypto.randomUUID(),
       timestamp: Date.now(),
       preview: item.geojson.substring(0, 100) + '...'
     };
-    
+
     // Add new item at the beginning
     const updatedHistory = [newItem, ...history];
-    
+
     // Keep only the latest MAX_HISTORY_ITEMS
     const trimmedHistory = updatedHistory.slice(0, MAX_HISTORY_ITEMS);
-    
+
     localStorage.setItem(HISTORY_KEY, JSON.stringify(trimmedHistory));
   } catch (error) {
     console.error('Failed to save to history:', error);
+  }
+}
+
+export async function addToHistoryWithAutoName(
+  item: Omit<HistoryItem, 'id' | 'timestamp' | 'name' | 'locationName'>,
+  geoJsonData: any
+): Promise<void> {
+  const { generateAutoName } = await import('./geocoding');
+
+  try {
+    const autoName = await generateAutoName(geoJsonData);
+
+    const itemWithName: Omit<HistoryItem, 'id' | 'timestamp'> = {
+      ...item,
+      name: autoName,
+      locationName: autoName
+    };
+
+    addToHistory(itemWithName);
+  } catch (error) {
+    console.error('Failed to generate auto name, using fallback:', error);
+
+    // Fallback to timestamp-based name
+    const timestamp = new Date().toISOString().slice(0, 16).replace('T', ' ');
+    const fallbackName = `GeoJSON ${timestamp}`;
+
+    const itemWithFallback: Omit<HistoryItem, 'id' | 'timestamp'> = {
+      ...item,
+      name: fallbackName,
+      locationName: fallbackName
+    };
+
+    addToHistory(itemWithFallback);
   }
 }
 
