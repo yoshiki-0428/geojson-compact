@@ -7,6 +7,7 @@ import { ModernSettingsPanel } from './components/ModernSettingsPanel';
 import { InlineMapView } from './components/InlineMapView';
 import { compressGeoJSON } from './utils/compression';
 import { generateAutoName } from './utils/geocoding';
+import { calculateSize } from './utils/advanced-compression';
 import { Toaster, toast } from 'react-hot-toast';
 
 interface CompressionResult {
@@ -71,11 +72,10 @@ function App() {
     try {
       const compressed = await compressGeoJSON(geoJsonData);
       const endTime = performance.now();
-      
-      const originalStr = JSON.stringify(geoJsonData);
-      const compressedStr = JSON.stringify(compressed);
-      const originalSize = new Blob([originalStr]).size;
-      const compressedSize = new Blob([compressedStr]).size;
+
+      // Use calculateSize for accurate minified JSON size
+      const originalSize = calculateSize(geoJsonData);
+      const compressedSize = calculateSize(compressed);
       const compressionRatio = (compressedSize / originalSize) * 100;
       
       const result: CompressionResult = {

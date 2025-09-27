@@ -69,7 +69,7 @@ function compressCoordinates(coords: any[], precision: number = 6, simplify: boo
     // Apply Douglas-Peucker simplification for LineString and Polygon
     if (simplify && coords.length > 2 && coords[0].length === 2) {
       const points: Point[] = coords.map(c => ({ x: c[0], y: c[1] }));
-      const simplified = douglasPeucker(points, 0.0001);
+      const simplified = douglasPeucker(points, 0.00001); // Reduced epsilon for better quality
       processedCoords = simplified.map(p => [p.x, p.y]);
     }
     
@@ -154,7 +154,7 @@ export async function compressGeoJSON(
   options: CompressionOptions = {}
 ): Promise<any> {
   const defaultOptions: CompressionOptions = {
-    precision: 6,
+    precision: 4, // Reduced from 6 to 4 decimal places (11.1m accuracy)
     simplify: true,
     removeNullProperties: true,
     ...options

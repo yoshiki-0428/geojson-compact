@@ -37,7 +37,8 @@ export function ModernResultsPanel({ result }: ModernResultsPanelProps) {
   }
 
   const handleDownload = () => {
-    const blob = new Blob([JSON.stringify(result.compressed, null, 2)], { type: 'application/json' });
+    // No formatting - minified JSON for actual compression
+    const blob = new Blob([JSON.stringify(result.compressed)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -47,7 +48,8 @@ export function ModernResultsPanel({ result }: ModernResultsPanelProps) {
   };
 
   const handleCopy = async () => {
-    await navigator.clipboard.writeText(JSON.stringify(result.compressed, null, 2));
+    // No formatting - minified JSON for actual compression
+    await navigator.clipboard.writeText(JSON.stringify(result.compressed));
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
