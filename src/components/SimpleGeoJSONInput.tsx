@@ -29,6 +29,7 @@ export function SimpleGeoJSONInput({ onGeoJSONLoad, onCompress, isCompressing }:
         setHasData(true);
         setPasteContent(JSON.stringify(data, null, 2));
       } catch (err) {
+        setHasData(false);
         alert('Invalid JSON format');
       }
     };
@@ -44,13 +45,23 @@ export function SimpleGeoJSONInput({ onGeoJSONLoad, onCompress, isCompressing }:
     }
   }, [handleFile]);
 
-  const handlePaste = () => {
+  // Auto-parse JSON when content changes
+  const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const value = e.target.value;
+    setPasteContent(value);
+
+    if (!value.trim()) {
+      setHasData(false);
+      return;
+    }
+
     try {
-      const data = JSON.parse(pasteContent);
+      const data = JSON.parse(value);
       onGeoJSONLoad(data);
       setHasData(true);
     } catch (err) {
-      alert('Invalid JSON format');
+      // Invalid JSON, but don't alert while typing
+      setHasData(false);
     }
   };
 
@@ -102,49 +113,55 @@ export function SimpleGeoJSONInput({ onGeoJSONLoad, onCompress, isCompressing }:
         <div className="space-y-2">
           <textarea
             value={pasteContent}
-            onChange={(e) => {
-              setPasteContent(e.target.value);
-              setHasData(false);
-            }}
+            onChange={handleTextChange}
             placeholder="Or paste GeoJSON here..."
             className={cn(
               'w-full h-32 p-3 rounded-lg border resize-none font-mono text-sm',
               'bg-white dark:bg-gray-800',
-              'border-gray-300 dark:border-gray-600',
+              hasData
+                ? 'border-green-500 dark:border-green-400'
+                : 'border-gray-300 dark:border-gray-600',
               'focus:border-purple-500 dark:focus:border-purple-400',
               'focus:outline-none focus:ring-2 focus:ring-purple-500/20'
             )}
           />
 
-          {/* Action Buttons - Always show both */}
-          <div className="flex gap-2">
-            <Button
-              onClick={handlePaste}
-              variant={hasData ? "outline" : "outline"}
-              className={cn("flex-1", hasData && "bg-green-50 dark:bg-green-900/20 border-green-500")}
-              disabled={!pasteContent || hasData}
-              icon={hasData ? <CheckCircle className="w-4 h-4 text-green-600" /> : undefined}
-            >
-              {hasData ? 'Loaded' : 'Load JSON'}
-            </Button>
-            <Button
-              onClick={onCompress}
-              variant="primary"
-              disabled={!hasData || isCompressing}
-              className="flex-1"
-              icon={isCompressing ? <Loader2 className="w-4 h-4 animate-spin" /> : undefined}
-            >
-              {isCompressing ? 'Compressing...' : 'Compress'}
-            </Button>
-            {hasData && (
-              <Button
-                onClick={handleClear}
-                variant="ghost"
-                size="sm"
-                icon={<X className="w-4 h-4" />}
-                title="Clear and load new JSON"
-              />
-            )}
+          {/* Status and Action Buttons */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 text-sm">
+              {hasData ? (
+                <>
+                  <CheckCircle className="w-4 h-4 text-green-600" />
+                  <span className="text-green-600 dark:text-green-400">Valid GeoJSON loaded</span>
+                </>
+              ) : pasteContent ? (
+                <span className="text-gray-500 dark:text-gray-400">Waiting for valid JSON...</span>
+              ) : (
+                <span className="text-gray-400 dark:text-gray-500">Paste or drop GeoJSON to start</span>
+              )}
+            </div>
+            <div className="flex gap-2">
+              {hasData && (
+                <>
+                  <Button
+                    onClick={handleClear}
+                    variant="ghost"
+                    size="sm"
+                    icon={<X className="w-4 h-4" />}
+                  >
+                    Clear
+                  </Button>
+                  <Button
+                    onClick={onCompress}
+                    variant="primary"
+                    disabled={isCompressing}
+                    icon={isCompressing ? <Loader2 className="w-4 h-4 animate-spin" /> : undefined}
+                  >
+                    {isCompressing ? 'Compressing...' : 'Compress'}
+                  </Button>
+                </>
+              )}
+            </div>
           </div>
         </div>
       </CardContent>
