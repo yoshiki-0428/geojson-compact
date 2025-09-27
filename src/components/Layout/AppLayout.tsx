@@ -169,7 +169,7 @@ export function AppLayout({ children, activeView, onViewChange }: AppLayoutProps
 
         {/* Main Content */}
         <main className="flex-1 overflow-hidden">
-          <div className="h-full overflow-auto">
+          <div className="h-full">
             {children}
           </div>
         </main>

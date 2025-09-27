@@ -4,7 +4,7 @@ import { ModernGeoJSONInput } from './components/ModernGeoJSONInput';
 import { ModernResultsPanel } from './components/ModernResultsPanel';
 import { ModernHistoryPanel } from './components/ModernHistoryPanel';
 import { ModernSettingsPanel } from './components/ModernSettingsPanel';
-import { ModernMapView } from './components/ModernMapView';
+import { InlineMapView } from './components/InlineMapView';
 import { compressGeoJSON } from './utils/compression';
 import { generateAutoName } from './utils/geocoding';
 import { Toaster, toast } from 'react-hot-toast';
@@ -35,7 +35,6 @@ function App() {
   const [compressionResult, setCompressionResult] = useState<CompressionResult | null>(null);
   const [isCompressing, setIsCompressing] = useState(false);
   const [history, setHistory] = useState<HistoryItem[]>([]);
-  const [showMap, setShowMap] = useState(false);
 
   // Load history from localStorage on component mount
   useEffect(() => {
@@ -136,15 +135,20 @@ function App() {
     switch (activeView) {
       case 'input':
         return (
-          <div className="space-y-6">
-            <ModernGeoJSONInput
-              onGeoJSONLoad={handleGeoJSONLoad}
-              onCompress={handleCompress}
-              isCompressing={isCompressing}
-            />
-            {compressionResult && (
-              <ModernResultsPanel result={compressionResult} />
-            )}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 h-full p-4 lg:p-6">
+            <div className="space-y-4 overflow-auto">
+              <ModernGeoJSONInput
+                onGeoJSONLoad={handleGeoJSONLoad}
+                onCompress={handleCompress}
+                isCompressing={isCompressing}
+              />
+              {compressionResult && (
+                <ModernResultsPanel result={compressionResult} />
+              )}
+            </div>
+            <div className="h-[500px] lg:h-full">
+              <InlineMapView geoJsonData={geoJsonData} />
+            </div>
           </div>
         );
       case 'history':
@@ -159,28 +163,10 @@ function App() {
   return (
     <>
       <AppLayout activeView={activeView} onViewChange={setActiveView}>
-        <div className="relative">
+        <div className="h-full">
           {renderContent()}
-          
-          {/* Floating Map Toggle for when compression result is available */}
-          {compressionResult && (
-            <button
-              onClick={() => setShowMap(!showMap)}
-              className="fixed bottom-6 right-6 p-4 bg-purple-600 hover:bg-purple-700 text-white rounded-full shadow-lg transition-all hover:scale-110 z-30"
-            >
-              {showMap ? 'Hide Map' : 'Show Map'}
-            </button>
-          )}
         </div>
       </AppLayout>
-
-      {/* Map Overlay */}
-      {showMap && compressionResult && (
-        <ModernMapView
-          geoJsonData={compressionResult.compressed}
-          onClose={() => setShowMap(false)}
-        />
-      )}
 
       <Toaster
         position="top-right"
