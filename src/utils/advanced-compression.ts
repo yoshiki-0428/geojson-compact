@@ -3,7 +3,7 @@
  */
 
 // Convert coordinates to delta encoding for better compression
-function deltaEncode(coords: number[][]): number[][] {
+export function deltaEncode(coords: number[][]): number[][] {
   if (coords.length <= 1) return coords;
 
   const encoded: number[][] = [coords[0]];
@@ -24,7 +24,7 @@ function optimizeNumber(num: number, precision: number): number {
 }
 
 // Optimize property values
-function optimizeProperties(props: any): any {
+export function optimizeProperties(props: any): any {
   if (!props) return undefined;
 
   const optimized: any = {};
