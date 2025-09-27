@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { Upload, FileJson, Loader2 } from 'lucide-react';
+import { Upload, FileJson, Loader2, CheckCircle, X } from 'lucide-react';
 import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { cn } from '../lib/utils';
@@ -14,6 +14,11 @@ export function SimpleGeoJSONInput({ onGeoJSONLoad, onCompress, isCompressing }:
   const [pasteContent, setPasteContent] = useState('');
   const [isDragging, setIsDragging] = useState(false);
   const [hasData, setHasData] = useState(false);
+
+  const handleClear = () => {
+    setPasteContent('');
+    setHasData(false);
+  };
 
   const handleFile = useCallback((file: File) => {
     const reader = new FileReader();
@@ -111,23 +116,34 @@ export function SimpleGeoJSONInput({ onGeoJSONLoad, onCompress, isCompressing }:
             )}
           />
 
-          {/* Action Buttons */}
+          {/* Action Buttons - Always show both */}
           <div className="flex gap-2">
-            {!hasData && pasteContent && (
-              <Button onClick={handlePaste} variant="outline" className="flex-1">
-                Load JSON
-              </Button>
-            )}
+            <Button
+              onClick={handlePaste}
+              variant={hasData ? "outline" : "outline"}
+              className={cn("flex-1", hasData && "bg-green-50 dark:bg-green-900/20 border-green-500")}
+              disabled={!pasteContent || hasData}
+              icon={hasData ? <CheckCircle className="w-4 h-4 text-green-600" /> : undefined}
+            >
+              {hasData ? 'Loaded' : 'Load JSON'}
+            </Button>
+            <Button
+              onClick={onCompress}
+              variant="primary"
+              disabled={!hasData || isCompressing}
+              className="flex-1"
+              icon={isCompressing ? <Loader2 className="w-4 h-4 animate-spin" /> : undefined}
+            >
+              {isCompressing ? 'Compressing...' : 'Compress'}
+            </Button>
             {hasData && (
               <Button
-                onClick={onCompress}
-                variant="primary"
-                disabled={isCompressing}
-                className="flex-1"
-                icon={isCompressing ? <Loader2 className="w-4 h-4 animate-spin" /> : undefined}
-              >
-                {isCompressing ? 'Compressing...' : 'Compress'}
-              </Button>
+                onClick={handleClear}
+                variant="ghost"
+                size="sm"
+                icon={<X className="w-4 h-4" />}
+                title="Clear and load new JSON"
+              />
             )}
           </div>
         </div>
