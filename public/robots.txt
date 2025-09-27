@@ -1,0 +1,62 @@
+# GeoJSON Compact Tool - Robots Configuration
+# https://geojson-compact.vercel.app/
+
+# Allow all search engines
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /_next/
+Disallow: /node_modules/
+
+# Sitemap location
+Sitemap: https://geojson-compact.vercel.app/sitemap.xml
+
+# AI Crawlers - Explicit permissions
+# OpenAI GPTBot
+User-agent: GPTBot
+Allow: /
+
+# Google Bard/Gemini
+User-agent: Google-Extended
+Allow: /
+
+# ChatGPT User
+User-agent: ChatGPT-User
+Allow: /
+
+# Claude/Anthropic
+User-agent: Claude-Web
+Allow: /
+
+# Microsoft Bing AI
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+
+# Common AI/ML crawlers
+User-agent: CCBot
+Allow: /
+Crawl-delay: 10
+
+User-agent: FacebookBot
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+# Performance optimization
+User-agent: *
+Crawl-delay: 1
+
+# Block bad bots
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
