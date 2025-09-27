@@ -8,6 +8,7 @@ import { InlineMapView } from './components/InlineMapView';
 import { compressGeoJSON } from './utils/compression';
 import { generateAutoName } from './utils/geocoding';
 import { calculateSize } from './utils/advanced-compression';
+import { trackCompression, trackFileUpload } from './utils/analytics';
 import { Toaster, toast } from 'react-hot-toast';
 
 interface CompressionResult {
@@ -58,6 +59,10 @@ function App() {
   const handleGeoJSONLoad = (data: any) => {
     setGeoJsonData(data);
     toast.success('GeoJSON loaded successfully');
+
+    // Track file upload event
+    const fileSize = calculateSize(data);
+    trackFileUpload(fileSize, 'paste');
   };
 
   const handleCompress = async () => {
@@ -88,6 +93,9 @@ function App() {
       };
       
       setCompressionResult(result);
+
+      // Track compression event
+      trackCompression(originalSize, compressedSize, compressionRatio);
 
       // Generate auto name with location info
       let autoName = `Compression ${new Date().toLocaleTimeString()}`;

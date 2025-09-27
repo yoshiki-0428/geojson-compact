@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Download, Copy, CheckCircle } from 'lucide-react';
 import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
+import { trackDownload } from '../utils/analytics';
 
 interface CompressionResult {
   original: any;
@@ -29,6 +30,9 @@ export function SimpleResultsPanel({ result }: SimpleResultsPanelProps) {
     a.download = 'compressed.geojson';
     a.click();
     URL.revokeObjectURL(url);
+
+    // Track download event
+    trackDownload(result.compressedSize);
   };
 
   const handleCopy = async () => {
